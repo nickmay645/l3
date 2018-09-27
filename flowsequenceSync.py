@@ -175,6 +175,7 @@ def minuteSequenceA(cf):
             down(cf, 1, 0.4, 0.15)
 
 
+
         #landing
         right(cf,1,0.2,0.15)
         land(cf,2,0.15)
@@ -182,6 +183,12 @@ def minuteSequenceA(cf):
 
         cf.commander.send_stop_setpoint()
 
+def hover(cf):
+    takeOff(cf, 1, 0.2)
+    posHold(cf, 10, 0.2)
+    posHold(cf, 10, 0.3)
+    posHold(cf, 10, 0.4)
+    land(cf, 4, 0.4)
 
 def run():
     cflib.crtp.init_drivers(enable_debug_driver=False)
@@ -197,7 +204,7 @@ def run():
         time.sleep(2)
 
 
-        minuteSequenceA(cf)
+        hover(cf)
 
 
         cf.commander.send_stop_setpoint()
