@@ -38,7 +38,16 @@ import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
+class ExecutionTime:
+    def __init__(self):
+        self.start_time = time.time()
 
+    def duration(self):
+        return time.time() - self.start_time
+
+
+# Only output errors from the logging framework
+timer = ExecutionTime()
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 
@@ -190,6 +199,18 @@ def hover(cf):
     posHold(cf, 10, 0.4)
     land(cf, 4, 0.4)
 
+def basicLoop(cf):
+    height = 0.4
+    takeOff(cf,1,height)
+    for _ in range(3):
+        right(cf,2,0.15,height)
+        posHold(cf,6,height)
+        left(cf, 2, 0.15, height)
+        posHold(cf, 6, height)
+    land(cf,2,0.4)
+
+
+
 def run():
     cflib.crtp.init_drivers(enable_debug_driver=False)
 
@@ -203,10 +224,11 @@ def run():
         cf.param.set_value('kalman.resetEstimation', '0')
         time.sleep(2)
 
-
-        hover(cf)
-
+        for _ in range(2):
+            basicLoop(cf)
+            time.sleep(4)
 
         cf.commander.send_stop_setpoint()
+        print('Finished in {} seconds.'.format(timer.duration()))
 
 run()
